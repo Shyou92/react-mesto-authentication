@@ -1,0 +1,11 @@
+import logo from "../images/Vector.svg";
+
+function Header() {
+  return (
+    <header className="header header__line">
+      <img src={logo} className="header__logo" alt="Логотип сайта 'Место'." />
+    </header>
+  );
+}
+
+export default Header;
