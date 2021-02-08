@@ -1,13 +1,17 @@
-import React, { useEffect } from "react";
-import Header from "./Header";
-import Main from "./Main";
-import Footer from "./Footer";
-import AddPlacePopup from "./AddPlacePopup";
-import ImagePopup from "./ImagePopup";
-import EditProfilePopup from "./EditProfilePopup";
-import EditAvatarPopup from "./EditAvatarPopup";
-import api from "../utils/api";
-import { CurrentUserContext } from "../contexts/currentUserContext";
+import React, { useEffect } from 'react';
+import { BrowserRouter, Route } from 'react-router-dom';
+import Header from './Header';
+import Main from './Main';
+import Footer from './Footer';
+import AddPlacePopup from './AddPlacePopup';
+import ImagePopup from './ImagePopup';
+import EditProfilePopup from './EditProfilePopup';
+import EditAvatarPopup from './EditAvatarPopup';
+import Register from './Register';
+import Login from './Login';
+import ProtectedRoute from './ProtectedRoute';
+import api from '../utils/api';
+import { CurrentUserContext } from '../contexts/currentUserContext';
 
 function App() {
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(
@@ -110,44 +114,50 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
-      <CurrentUserContext.Provider value={currentUser}>
-        <div className="page">
-          <Header />
-          <Main
-            onEditAvatar={onEditAvatar}
-            onEditProfile={onEditProfile}
-            onAddPlace={onAddPlace}
-            onCardClick={handleCardClick}
-            сards={cards}
-            onCardLike={handleLikeCard}
-            onCardDelete={handleCardDelete}
-          />
-          <Footer />
-          <EditAvatarPopup
-            isOpened={isEditAvatarPopupOpen}
-            onClose={closeAllPopups}
-            onUpdateAvatar={handleUpdateAvatar}
-          />
-          <EditProfilePopup
-            isOpened={isEditProfilePopupOpen}
-            onClose={closeAllPopups}
-            onUpdateUser={handleUpdateUser}
-          />
-          <AddPlacePopup
-            isOpened={isAddPlacePopupOpen}
-            onClose={closeAllPopups}
-            onAddPlace={handleAddPlaceSubmit}
-          />
-          <ImagePopup
-            card={selectedCard || {}}
-            isOpened={selectedCard && "popup_is-opened"}
-            onCardClick={handleCardClick}
-            onClose={closeAllPopups}
-          />
-        </div>
-      </CurrentUserContext.Provider>
-    </div>
+    <BrowserRouter>
+      <div className='App'>
+        <CurrentUserContext.Provider value={currentUser}>
+          <div className='page'>
+            <Header />
+            <Route path='/sign-up' component={Register} />
+            <Route path='/sign-in' component={Login} />
+            <Route exact path='/'>
+              <Main
+                onEditAvatar={onEditAvatar}
+                onEditProfile={onEditProfile}
+                onAddPlace={onAddPlace}
+                onCardClick={handleCardClick}
+                сards={cards}
+                onCardLike={handleLikeCard}
+                onCardDelete={handleCardDelete}
+              />
+              <Footer />
+              <EditAvatarPopup
+                isOpened={isEditAvatarPopupOpen}
+                onClose={closeAllPopups}
+                onUpdateAvatar={handleUpdateAvatar}
+              />
+              <EditProfilePopup
+                isOpened={isEditProfilePopupOpen}
+                onClose={closeAllPopups}
+                onUpdateUser={handleUpdateUser}
+              />
+              <AddPlacePopup
+                isOpened={isAddPlacePopupOpen}
+                onClose={closeAllPopups}
+                onAddPlace={handleAddPlaceSubmit}
+              />
+              <ImagePopup
+                card={selectedCard || {}}
+                isOpened={selectedCard && 'popup_is-opened'}
+                onCardClick={handleCardClick}
+                onClose={closeAllPopups}
+              />
+            </Route>
+          </div>
+        </CurrentUserContext.Provider>
+      </div>
+    </BrowserRouter>
   );
 }
 

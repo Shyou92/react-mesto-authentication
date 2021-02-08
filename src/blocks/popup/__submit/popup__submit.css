@@ -13,6 +13,7 @@
   text-align: center;
   color: #fff;
   cursor: pointer;
+  outline: none;
 }
 
 .popup__submit:not(.popup__submit_inactive):hover {
