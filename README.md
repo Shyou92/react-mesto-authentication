@@ -6,6 +6,7 @@
    d) Release of adding card;
    e) Editing of avatar;
    f) Likes and deleting cards;
+   g) added registration and login service
 
 # Getting Started with Create React App
 
