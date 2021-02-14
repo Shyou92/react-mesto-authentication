@@ -1,18 +1,10 @@
 import logo from '../images/Vector.svg';
 import { Link, Route } from 'react-router-dom';
 
-function Header() {
+function Header({ handleSignOut, userData }) {
   return (
     <header className='header header__line'>
       <img src={logo} className='header__logo' alt="Логотип сайта 'Место'." />
-      <Route exact path='/'>
-        <div className='header__container'>
-          <p className='header__container-text'>email@mail.com</p>
-          <Link className='header__link' to='sign-in'>
-            Выход
-          </Link>
-        </div>
-      </Route>
       <Route path='/sign-up'>
         <Link className='header__link' to='sign-in'>
           Войти
@@ -22,6 +14,16 @@ function Header() {
         <Link className='header__link' to='sign-up'>
           Регистрация
         </Link>
+      </Route>
+      <Route exact path='/'>
+        <div className='header__container'>
+          <p className='header__container-text'>{userData}</p>
+          <Link to='/sign-in'>
+            <button className='header__link' onClick={handleSignOut}>
+              Выход
+            </button>
+          </Link>
+        </div>
       </Route>
     </header>
   );

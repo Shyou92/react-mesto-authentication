@@ -1,8 +1,14 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter, Route } from 'react-router-dom';
+import {
+  BrowserRouter,
+  Route,
+  Switch,
+  useHistory,
+  withRouter,
+  Redirect,
+} from 'react-router-dom';
 import Header from './Header';
 import Main from './Main';
-import Footer from './Footer';
 import AddPlacePopup from './AddPlacePopup';
 import ImagePopup from './ImagePopup';
 import EditProfilePopup from './EditProfilePopup';
@@ -12,6 +18,7 @@ import Login from './Login';
 import ProtectedRoute from './ProtectedRoute';
 import InfoTooltip from './InfoTooltip';
 import api from '../utils/api';
+import * as authApi from '../utils/authApi';
 import { CurrentUserContext } from '../contexts/currentUserContext';
 
 function App() {
@@ -22,11 +29,30 @@ function App() {
     false
   );
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
+  const [isRegistrationPopupOpen, setIsRegistrationPopupOpen] = React.useState(
+    false
+  );
   const [selectedCard, setSelectedCard] = React.useState(null);
   const [currentUser, setCurrentUser] = React.useState({});
   const [cards, setCards] = React.useState([]);
   const [loggedIn, setLoggedIn] = React.useState(false);
-  const [userData, setUserData] = React.useState({});
+  const [userData, setUserData] = React.useState('');
+  const [resStatus, setResStatus] = React.useState(0);
+  const history = useHistory();
+
+  useEffect(() => {
+    const jwt = localStorage.getItem('jwt');
+    if (jwt) {
+      tokenCheck(jwt);
+      setUserData(userData);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (loggedIn) {
+      history.push('/');
+    }
+  }, [loggedIn]);
 
   const onEditAvatar = () => {
     setIsEditAvatarPopupOpen(true);
@@ -40,6 +66,10 @@ function App() {
     setIsAddPlacePopupOpen(true);
   };
 
+  const onRegisterPopup = () => {
+    setIsRegistrationPopupOpen(true);
+  };
+
   const handleCardClick = (card) => {
     setSelectedCard(card);
   };
@@ -49,6 +79,7 @@ function App() {
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
     setSelectedCard(null);
+    setIsRegistrationPopupOpen(false);
   };
 
   const handleCurrentUser = (data) => {
@@ -107,6 +138,56 @@ function App() {
       .catch((error) => console.log(error));
   };
 
+  const handleRegister = (data) => {
+    const { email, password } = data;
+    return authApi.register(email, password).then((res) => {
+      setResStatus(res.status);
+      if (!res || res.status === 400) {
+        return (res.status = 400);
+      }
+      if (res) {
+        return res;
+      }
+    });
+  };
+
+  const handleLogin = (data) => {
+    const { email, password } = data;
+    return authApi.authorize(email, password).then((res) => {
+      if (res.token) {
+        setLoggedIn(true);
+        tokenCheck(res.token);
+        setUserData(userData);
+        setResStatus(null);
+        localStorage.setItem('jwt', res.token);
+      }
+      return res;
+    });
+  };
+
+  const handleSignOut = () => {
+    localStorage.removeItem('jwt');
+    history.push('/sign-in');
+    setUserData('');
+  };
+
+  const tokenCheck = (jwt) => {
+    authApi.getContent(jwt).then((res) => {
+      if (jwt !== localStorage.getItem('jwt')) {
+        throw new Error('Переданный токен некорректен');
+      }
+      if (!res) {
+        throw new Error('Токен не передан или передан не в том формате');
+      }
+      if (res) {
+        let userEmail = res.data.email;
+        setLoggedIn(true);
+        setUserData(userEmail);
+        history.push('/');
+      }
+    });
+  };
+
   useEffect(() => {
     Promise.all([api.getUserInfo(), api.getCards()])
       .then(([res, data]) => {
@@ -121,11 +202,25 @@ function App() {
       <div className='App'>
         <CurrentUserContext.Provider value={currentUser}>
           <div className='page'>
-            <Header />
-            <Route path='/sign-in' component={Login} />
-            <Route path='/sign-up' component={Register} />
-            <Route exact path='/' loggedIn={loggedIn} userData={userData}>
-              <Main
+            <Header handleSignOut={handleSignOut} userData={userData} />
+            <Switch>
+              <Route path='/sign-in'>
+                <Login handleLogin={handleLogin} tokenCheck={tokenCheck} />
+              </Route>
+
+              <Route path='/sign-up'>
+                <Register
+                  onRegister={handleRegister}
+                  onRegisterPopup={onRegisterPopup}
+                />
+              </Route>
+
+              <ProtectedRoute
+                exact
+                path='/'
+                loggedIn={loggedIn}
+                userData={userData}
+                component={Main}
                 onEditAvatar={onEditAvatar}
                 onEditProfile={onEditProfile}
                 onAddPlace={onAddPlace}
@@ -134,28 +229,39 @@ function App() {
                 onCardLike={handleLikeCard}
                 onCardDelete={handleCardDelete}
               />
-              <Footer />
+            </Switch>
+            <Route>
+              {loggedIn ? <Redirect to='/' /> : <Redirect to='sign-in' />}
             </Route>
             <EditAvatarPopup
               isOpened={isEditAvatarPopupOpen}
               onClose={closeAllPopups}
               onUpdateAvatar={handleUpdateAvatar}
             />
+
             <EditProfilePopup
               isOpened={isEditProfilePopupOpen}
               onClose={closeAllPopups}
               onUpdateUser={handleUpdateUser}
             />
+
             <AddPlacePopup
               isOpened={isAddPlacePopupOpen}
               onClose={closeAllPopups}
               onAddPlace={handleAddPlaceSubmit}
             />
+
             <ImagePopup
               card={selectedCard || {}}
               isOpened={selectedCard && 'popup_is-opened'}
               onCardClick={handleCardClick}
               onClose={closeAllPopups}
+            />
+
+            <InfoTooltip
+              isOpened={isRegistrationPopupOpen}
+              onClose={closeAllPopups}
+              resStatus={resStatus}
             />
           </div>
         </CurrentUserContext.Provider>
@@ -164,4 +270,4 @@ function App() {
   );
 }
 
-export default App;
+export default withRouter(App);

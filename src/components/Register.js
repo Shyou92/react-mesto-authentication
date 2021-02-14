@@ -1,12 +1,13 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
-function Register() {
+const Register = ({ onRegister, onRegisterPopup }) => {
   const [data, setData] = useState({
-    userEmail: '',
-    userPassword: '',
-    message: '',
+    email: '',
+    password: '',
   });
+
+  const history = useHistory();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -18,35 +19,37 @@ function Register() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    if (data.userPassword) {
-      let { userEmail, userPassword } = data;
-      console.log({ userEmail, userPassword });
-    }
+    onRegister(data)
+      .then((res) => {
+        return res;
+      })
+      .then(() => history.push('/sign-in'))
+      .catch((err) => console.log(err));
   };
+
   return (
-    <div className='register'>
+    <div className='register' onSubmit={handleSubmit}>
       <h2 className='register__heading'>Регистрация</h2>
-      <form className='register__form' onSubmit={handleSubmit}>
+      <form className='register__form'>
         <input
           className='popup__input popup__input_dark'
           type='email'
-          name='userEmail'
+          name='email'
           placeholder='Email'
-          value={data.userEmail}
+          value={data.email}
           onChange={handleChange}
           noValidate
         />
         <input
           className='popup__input popup__input_dark'
           type='password'
-          name='userPassword'
+          name='password'
           placeholder='Пароль'
-          value={data.userPassword}
+          value={data.password}
           onChange={handleChange}
           noValidate
         />
-        <button className='register__form-submit' type='submit'>
+        <button className='register__form-submit' onClick={onRegisterPopup}>
           Зарегистрироваться
         </button>
       </form>
@@ -58,6 +61,6 @@ function Register() {
       </p>
     </div>
   );
-}
+};
 
 export default Register;

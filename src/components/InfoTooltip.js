@@ -1,15 +1,21 @@
 import successTip from '../images/Union.svg';
 import failTip from '../images/Fail.svg';
 
-function InfoTooltip() {
+function InfoTooltip({ isOpened, onClose, resStatus }) {
   return (
-    <div className={`popup`}>
+    <div className={`popup ${isOpened ? 'popup_is-opened' : ''}`}>
       <div className='popup__container popup__container_reg-response'>
-        <img src={successTip} alt={'success'} className='popup__reg-image' />
+        <img
+          src={resStatus === 201 ? successTip : failTip}
+          alt='статус'
+          className='popup__reg-image'
+        />
         <h2 className='popup__title popup__reg-title'>
-          Вы успешно зарегистрировались!
+          {resStatus === 201
+            ? 'Вы успешно зарегистрировались!'
+            : 'Что-то пошло не так! Попробуйте ещё раз.'}
         </h2>
-        <button className='popup__close' type='button'></button>
+        <button className='popup__close' onClick={onClose}></button>
       </div>
     </div>
   );

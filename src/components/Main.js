@@ -1,6 +1,8 @@
-import React from "react";
-import Card from "./Card";
-import { CurrentUserContext } from "../contexts/currentUserContext";
+import React from 'react';
+import Card from './Card';
+import Footer from './Footer';
+import { Route } from 'react-router-dom';
+import { CurrentUserContext } from '../contexts/currentUserContext';
 
 function Main({
   onEditAvatar,
@@ -14,28 +16,28 @@ function Main({
   const currentUser = React.useContext(CurrentUserContext);
 
   return (
-    <main className="content">
-      <section className="profile">
+    <main className='content'>
+      <section className='profile'>
         <img
           src={currentUser.avatar}
-          className="profile__image"
-          name="avatar"
-          alt="Аватарка"
+          className='profile__image'
+          name='avatar'
+          alt='Аватарка'
         />
-        <button className="profile__edit" onClick={onEditAvatar}></button>
+        <button className='profile__edit' onClick={onEditAvatar}></button>
 
-        <div className="profile__info">
-          <h2 className="profile__info-name">{currentUser.name}</h2>
+        <div className='profile__info'>
+          <h2 className='profile__info-name'>{currentUser.name}</h2>
           <button
-            className="profile__info-edit"
+            className='profile__info-edit'
             onClick={onEditProfile}
           ></button>
-          <p className="profile__info-job">{currentUser.about}</p>
+          <p className='profile__info-job'>{currentUser.about}</p>
         </div>
-        <button className="profile__add-button" onClick={onAddPlace}></button>
+        <button className='profile__add-button' onClick={onAddPlace}></button>
       </section>
 
-      <section className="elements">
+      <section className='elements'>
         {сards.map((item) => {
           return (
             <Card
@@ -48,6 +50,7 @@ function Main({
           );
         })}
       </section>
+      <Route component={Footer} />
     </main>
   );
 }
