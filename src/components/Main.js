@@ -2,7 +2,7 @@ import React from 'react';
 import Card from './Card';
 import Footer from './Footer';
 import { Route } from 'react-router-dom';
-import { CurrentUserContext } from '../contexts/currentUserContext';
+import { CurrentUserContext } from '../contexts/СurrentUserContext';
 
 function Main({
   onEditAvatar,

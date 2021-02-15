@@ -1,10 +1,10 @@
-import React from "react";
-import PopupWithForm from "./PopupWithForm";
-import { CurrentUserContext } from "../contexts/currentUserContext";
+import React from 'react';
+import PopupWithForm from './PopupWithForm';
+import { CurrentUserContext } from '../contexts/СurrentUserContext';
 
 function EditProfilePopup({ isOpened, onClose, onUpdateUser }) {
-  const [name, setName] = React.useState("");
-  const [description, setDescription] = React.useState("");
+  const [name, setName] = React.useState('');
+  const [description, setDescription] = React.useState('');
   const currentUser = React.useContext(CurrentUserContext);
 
   function handleChangeName(e) {
@@ -25,50 +25,50 @@ function EditProfilePopup({ isOpened, onClose, onUpdateUser }) {
 
   React.useEffect(() => {
     if (currentUser) {
-      setName(currentUser.name || "");
-      setDescription(currentUser.about || "");
+      setName(currentUser.name || '');
+      setDescription(currentUser.about || '');
     }
   }, [currentUser]);
 
   return (
     <PopupWithForm
-      title="Редактировать профиль"
-      name="editProfile"
-      modifier="content_text"
+      title='Редактировать профиль'
+      name='editProfile'
+      modifier='content_text'
       isOpened={isOpened}
-      buttonTextContent="Сохранить"
+      buttonTextContent='Сохранить'
       onSubmit={handleSubmit}
       onClose={onClose}
     >
-      <section className="popup__form-section">
+      <section className='popup__form-section'>
         <input
-          type="text"
+          type='text'
           required
-          className="popup__input popup__input_name"
-          id="edit-name-popup"
-          minLength="2"
-          maxLength="40"
-          name="name"
-          placeholder="Имя"
+          className='popup__input popup__input_name'
+          id='edit-name-popup'
+          minLength='2'
+          maxLength='40'
+          name='name'
+          placeholder='Имя'
           value={name}
           onChange={handleChangeName}
         />
-        <span className="popup__input_error" id="edit-name-popup-error"></span>
+        <span className='popup__input_error' id='edit-name-popup-error'></span>
       </section>
-      <section className="popup__form-section">
+      <section className='popup__form-section'>
         <input
-          type="text"
+          type='text'
           required
-          className="popup__input popup__input_job"
-          id="edit-job-popup"
-          minLength="2"
-          maxLength="200"
-          name="about"
-          placeholder="Профессия"
+          className='popup__input popup__input_job'
+          id='edit-job-popup'
+          minLength='2'
+          maxLength='200'
+          name='about'
+          placeholder='Профессия'
           value={description}
           onChange={handleChangeDescription}
         />
-        <span className="popup__input_error" id="edit-job-popup-error"></span>
+        <span className='popup__input_error' id='edit-job-popup-error'></span>
       </section>
     </PopupWithForm>
   );

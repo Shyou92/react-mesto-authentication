@@ -19,7 +19,7 @@ import ProtectedRoute from './ProtectedRoute';
 import InfoTooltip from './InfoTooltip';
 import api from '../utils/api';
 import * as authApi from '../utils/authApi';
-import { CurrentUserContext } from '../contexts/currentUserContext';
+import { CurrentUserContext } from '../contexts/СurrentUserContext';
 
 function App() {
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(
@@ -140,29 +140,35 @@ function App() {
 
   const handleRegister = (data) => {
     const { email, password } = data;
-    return authApi.register(email, password).then((res) => {
-      setResStatus(res.status);
-      if (!res || res.status === 400) {
-        return (res.status = 400);
-      }
-      if (res) {
-        return res;
-      }
-    });
+    return authApi
+      .register(email, password)
+      .then((res) => {
+        setResStatus(res.status);
+        if (!res || res.status === 400) {
+          return (res.status = 400);
+        }
+        if (res) {
+          return res;
+        }
+      })
+      .catch((err) => console.log(err));
   };
 
   const handleLogin = (data) => {
     const { email, password } = data;
-    return authApi.authorize(email, password).then((res) => {
-      if (res.token) {
-        setLoggedIn(true);
-        tokenCheck(res.token);
-        setUserData(userData);
-        setResStatus(null);
-        localStorage.setItem('jwt', res.token);
-      }
-      return res;
-    });
+    return authApi
+      .authorize(email, password)
+      .then((res) => {
+        if (res.token) {
+          setLoggedIn(true);
+          tokenCheck(res.token);
+          setUserData(userData);
+          setResStatus(null);
+          localStorage.setItem('jwt', res.token);
+        }
+        return res;
+      })
+      .catch((err) => console.log(err));
   };
 
   const handleSignOut = () => {
@@ -172,20 +178,23 @@ function App() {
   };
 
   const tokenCheck = (jwt) => {
-    authApi.getContent(jwt).then((res) => {
-      if (jwt !== localStorage.getItem('jwt')) {
-        throw new Error('Переданный токен некорректен');
-      }
-      if (!res) {
-        throw new Error('Токен не передан или передан не в том формате');
-      }
-      if (res) {
-        let userEmail = res.data.email;
-        setLoggedIn(true);
-        setUserData(userEmail);
-        history.push('/');
-      }
-    });
+    authApi
+      .getContent(jwt)
+      .then((res) => {
+        if (jwt !== localStorage.getItem('jwt')) {
+          throw new Error('Переданный токен некорректен');
+        }
+        if (!res) {
+          throw new Error('Токен не передан или передан не в том формате');
+        }
+        if (res) {
+          let userEmail = res.data.email;
+          setLoggedIn(true);
+          setUserData(userEmail);
+          history.push('/');
+        }
+      })
+      .catch((err) => console.log(err));
   };
 
   useEffect(() => {

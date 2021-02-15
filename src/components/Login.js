@@ -19,7 +19,9 @@ function Login({ handleLogin }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    handleLogin(data).then(() => history.push('/'));
+    handleLogin(data)
+      .then(() => history.push('/'))
+      .catch((err) => console.log(err));
   };
 
   return (
